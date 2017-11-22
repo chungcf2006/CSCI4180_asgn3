@@ -48,4 +48,16 @@ public class Index implements Serializable {
     else
       return null;
   }
+
+  public int numChunks () {
+    int count = 0;
+    for (Map.Entry<String,Integer> chunk : chunks.entrySet()) {
+      count += chunk.getValue();
+    }
+    return count;
+  }
+
+  public int numUniqueChunks () {
+    return chunks.size();
+  }
 }

@@ -36,9 +36,12 @@ public class MyDedup {
     return c;
   }
 
+  private static int sizeWithDedup = 0;
+  private static int sizeWithoutDedup = 0;
+
   public static void extractChunk(long start, long end, RandomAccessFile infile, Index index, String file_to_upload, Backend storage){
-    System.out.printf("(%d, %d) Size: %d byte, %d KB\n", start, end, end-start+1, (end-start+1)/1024);
     if (end >= start) {
+      System.out.printf("(%d, %d) Size: %d byte, %d KB\n", start, end, end-start+1, (end-start+1)/1024);
       try {
         byte[] data = new byte[(int)(end-start+1)];
         infile.seek(start);
@@ -52,9 +55,11 @@ public class MyDedup {
         index.newChunk(file_to_upload, hash);
 
         // System.out.println(sb);
-
-        if (!index.chunkExist(hash))
+        sizeWithoutDedup += end-start+1;
+        if (!index.chunkExist(hash)){
           storage.write(hash, data);
+          sizeWithDedup += end-start+1;
+        }
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -158,12 +163,13 @@ public class MyDedup {
 
           infile.close();
 
-          System.out.println();
-
-
-
           storage.writeIndex("MyDedup.index", index);
-          System.out.println("Written index file");
+
+          System.out.printf("Total number of chunks in storage: %d\n", index.numChunks());
+          System.out.printf("Number of unique chunks in storage: %d\n", index.numUniqueChunks());
+          System.out.printf("Number of bytes in storage with deduplication: %d\n", sizeWithDedup);
+          System.out.printf("Number of bytes in storage without deduplication: %d\n", sizeWithoutDedup);
+          System.out.printf("Space saving: %.4f\n", 1-(sizeWithDedup/(double)sizeWithoutDedup));
         }
             
       } catch (Exception e) {
