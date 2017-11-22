@@ -37,7 +37,7 @@ public class MyDedup {
   }
 
   public static void extractChunk(long start, long end, RandomAccessFile infile, Index index, String file_to_upload, Backend storage){
-    System.out.printf("%d, %d\n", start, end);
+    System.out.printf("(%d, %d) Size: %d byte, %d KB\n", start, end, end-start+1, (end-start+1)/1024);
     if (end >= start) {
       try {
         byte[] data = new byte[(int)(end-start+1)];
@@ -126,7 +126,7 @@ public class MyDedup {
               window_size = min_chunk;
               infile.seek(s);
               for (long i = s; i < s+min_chunk; i++) {
-                temp += ((infile.readByte() % avg_chunk) * modPow(d, min_chunk-((int)(i-s))-1, avg_chunk)) % avg_chunk;
+                temp += ((infile.readByte() & (avg_chunk-1)) * modPow(d, min_chunk-((int)(i-s))-1, avg_chunk)) & (avg_chunk-1);
               }
               reset = false;
             } else {
@@ -136,10 +136,10 @@ public class MyDedup {
               infile.seek(s+min_chunk-1);
               byte end = infile.readByte();
 
-              temp = (prevRFP - (start * modPow(d,min_chunk-1,avg_chunk)) % avg_chunk) % avg_chunk;
+              temp = (prevRFP - (start * modPow(d,min_chunk-1,avg_chunk)) & (avg_chunk-1)) & (avg_chunk-1);
               if (temp < 0)
                 temp += avg_chunk;
-              temp = ((temp * (d % avg_chunk)) % avg_chunk) + (end % avg_chunk);
+              temp = ((temp * (d & (avg_chunk-1))) & (avg_chunk-1)) + (end & (avg_chunk-1));
             }
 
             temp = temp & (avg_chunk-1);

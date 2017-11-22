@@ -19,16 +19,16 @@ public class Index implements Serializable {
 
     if (!this.files.containsKey(filename)){
       this.files.put(filename, new ArrayList<String>());
-      System.out.printf("Created Chunk List for %s\n", filename);
+      // System.out.printf("Created Chunk List for %s\n", filename);
     }
     this.files.get(filename).add(hash);
-    System.out.printf("Added hash %s for %s\n", hash, filename);
+    // System.out.printf("Added hash %s for %s\n", hash, filename);
 
     if (!this.chunks.containsKey(hash)){
       this.chunks.put(hash, 0);
     }
     this.chunks.put(hash, this.chunks.get(hash) + 1);
-    System.out.printf("Added counter for hash %s, current value: %d\n", hash, this.chunks.get(hash));
+    // System.out.printf("Added counter for hash %s, current value: %d\n", hash, this.chunks.get(hash));
 
   }
 
