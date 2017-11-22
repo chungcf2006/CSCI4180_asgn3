@@ -65,9 +65,21 @@ public class MyDedup {
 
   public static void main (String args[]) {
     // Read Parameters
+    if (args.length < 1){
+      System.err.println("Usage: java MyDedup upload min_chunk avg_chunk max_chunk d file_to_upload <local|azure|s3>");
+      System.err.println("       java MyDedup download file_to_download <local|azure|s3>");
+      System.err.println("       java MyDedup delete file_to_delete <local|azure|s3>");
+      System.exit(1);
+    }
+
     String operation = args[0];
 
     if (operation.equals("upload")) {
+      if (args.length != 7){
+        System.err.println("Usage: java MyDedup upload min_chunk avg_chunk max_chunk d file_to_upload <local|azure|s3>");
+        System.exit(1);
+      }
+
       System.out.println("Operation: Upload");
 
       int min_chunk = Integer.parseInt(args[1]);
@@ -160,6 +172,11 @@ public class MyDedup {
 
 
     } else if (operation.equals("download")) {
+      if (args.length != 3){
+        System.err.println("Usage: java MyDedup download file_to_download <local|azure|s3>");
+        System.exit(1);
+      }
+
       System.out.println("Operation: Download");
 
       String file_to_download = args[1];
@@ -186,6 +203,11 @@ public class MyDedup {
       }
 
     } else if (operation.equals("delete")) {
+      if (args.length != 3){
+        System.err.println("Usage: java MyDedup delete file_to_delete <local|azure|s3>");
+        System.exit(1);
+      }
+
       System.out.println("Operation: Delete");
 
       String file_to_delete = args[1];
@@ -199,7 +221,9 @@ public class MyDedup {
 
 
     } else {
-      System.err.println("Illegal operation. Please select from <upload|download|delete>");
+      System.err.println("Usage: java MyDedup upload min_chunk avg_chunk max_chunk d file_to_upload <local|azure|s3>");
+      System.err.println("       java MyDedup download file_to_download <local|azure|s3>");
+      System.err.println("       java MyDedup delete file_to_delete <local|azure|s3>");
       System.exit(1);
     }
   }
