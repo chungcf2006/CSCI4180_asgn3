@@ -15,6 +15,7 @@ public class Index implements Serializable {
   }
 
   public void newChunk (String filename, String hash) {
+    filename = filename.substring(filename.lastIndexOf("/")>0?filename.lastIndexOf("/")+1:0);
 
     if (!this.files.containsKey(filename)){
       this.files.put(filename, new ArrayList<String>());
@@ -36,10 +37,12 @@ public class Index implements Serializable {
   }
 
   public boolean fileExist (String filename) {
+    filename = filename.substring(filename.lastIndexOf("/")>0?filename.lastIndexOf("/")+1:0);
     return files.containsKey(filename);
   }
 
   public List<String> getChunkListByFile (String filename) {
+    filename = filename.substring(filename.lastIndexOf("/")>0?filename.lastIndexOf("/")+1:0);
     if (this.files.containsKey(filename))
       return this.files.get(filename);
     else
