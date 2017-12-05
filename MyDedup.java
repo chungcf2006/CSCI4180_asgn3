@@ -15,10 +15,10 @@ public class MyDedup {
     } else if (backend.equals("azure")) {
       return new Azure("DefaultEndpointsProtocol=https;AccountName=csci4180gp12;AccountKey=7fRSQz7pSFbzBSu/pP0WwDGy5ILLody8BcTVxAtVLwvCO9nOenRN5XFOGKWiB1T1P8b+pp4SCbSLYceYt2yfpA==;EndpointSuffix=core.windows.net");
     } else if (backend.equals("s3")) {
+      return new S3();
     } else {
       throw new UnsupportedOperationException("Backend Type Not Supported");
     }
-    return null;
   }
 
   public static String hashToString (byte[] hash) {
@@ -68,7 +68,7 @@ public class MyDedup {
     
   }
 
-  public static void main (String args[]) {
+  public static void main(String args[]) {
     // Read Parameters
     if (args.length < 1){
       System.err.println("Usage: java MyDedup upload min_chunk avg_chunk max_chunk d file_to_upload <local|azure|s3>");
