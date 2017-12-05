@@ -11,6 +11,13 @@ public class Azure implements Backend {
   private String storageConnectionString;
   private CloudBlobContainer container;
 
+  static {
+    System.setProperty("https.proxyHost", "proxy.cse.cuhk.edu.hk");
+    System.setProperty("https.proxyPort", "8000");
+    System.setProperty("http.proxyHost", "proxy.cse.cuhk.edu.hk");
+    System.setProperty("http.proxyPort", "8000");
+  }
+
   public Azure (String connectionString) {
     storageConnectionString = connectionString;
     try {

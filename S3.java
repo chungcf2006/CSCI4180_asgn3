@@ -14,12 +14,17 @@ public class S3 implements Backend {
     private static final String tmpFolder = "tmp/";
     AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
 
+    static {
+        System.setProperty("https.proxyHost", "proxy.cse.cuhk.edu.hk");
+        System.setProperty("https.proxyPort", "8000");
+        System.setProperty("http.proxyHost", "proxy.cse.cuhk.edu.hk");
+        System.setProperty("http.proxyPort", "8000");
+    }
     public S3()
     {
         Bucket b = null;
         String bucket_name = "csci4180group12";
         if (s3.doesBucketExist(bucket_name)) {
-            System.out.format("Bucket %s already exists.\n", bucket_name);
             b = getBucket(bucket_name);
         } else {
             try {
@@ -104,7 +109,6 @@ public class S3 implements Backend {
             os.close();
 
            // File source = new File(tmpFolder+filename);
-            //
             s3.putObject("csci4180group12", tmpFolder+filename, new File(tmpFolder+filename));
 
             return true;

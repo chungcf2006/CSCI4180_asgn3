@@ -232,6 +232,14 @@ public class MyDedup {
       System.out.printf("backend: %s\n", backend);
       System.out.println("*************************************");
 
+      try {
+        Backend storage = selectBackend(backend);
+        Index index = storage.readIndex("MyDedup.index");
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+
 
     } else {
       System.err.println("Usage: java MyDedup upload min_chunk avg_chunk max_chunk d file_to_upload <local|azure|s3>");
