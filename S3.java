@@ -3,6 +3,7 @@ import java.io.*;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.*;
 import com.amazonaws.services.s3.model.*;
+import org.apache.commons.io.*;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -28,14 +29,25 @@ public class S3 implements Backend {
             }
         }
 
+        if (!(new File(tmpFolder)).exists()) {
+            System.out.println("tmp folder does not exist, trying to create...");
+            if ((new File(tmpFolder)).mkdir())
+                System.out.println("tmp folder Created");
+        }
+
+        if (!this.exists("tmp/MyDedup.index")) {
+            System.out.println("index file does not exist, trying to create...");
+            if (this.writeIndex("MyDedup.index", new Index()))
+                System.out.println("index file Created");
+        }
+
 
     }
 
     public boolean exists (String name) {
         try {
-            S3Object o = s3.getObject("csci4180group12", name);
-            S3ObjectInputStream s3is = o.getObjectContent();
-            return true;
+            boolean exists = s3.doesObjectExist("csci4180group12", name);
+            return exists;
         } catch(Exception ex) {
             ex.printStackTrace();
             return false;
@@ -50,8 +62,11 @@ public class S3 implements Backend {
     public void write (String fileName, byte[] data) throws IOException {
         try {
             System.out.printf("Writing: %s\n", fileName);
+            File tempFile = File.createTempFile("prefix", "suffix");
             //
-            s3.putObject("csci4180group12", fileName, new File(fileName));
+            FileUtils.copyInputStreamToFile(new ByteArrayInputStream(data), tempFile);
+            //s3.putObject("csci4180group12", fileName, new ByteArrayInputStream(data),new ObjectMetadata());
+            s3.putObject("csci4180group12", fileName, tempFile);
         } catch(Exception ex) {
             ex.printStackTrace();
         }
@@ -64,20 +79,16 @@ public class S3 implements Backend {
 
         try {
             for (String hash : chunks) {
-                S3Object o = s3.getObject("csci4180group12", tmpFolder+hash+".download");
+                S3Object o = s3.getObject("csci4180group12", hash);
                 S3ObjectInputStream s3is = o.getObjectContent();
                 byte[] read_buf = new byte[1024];
                 int read_len = 0;
 
-                RandomAccessFile infile = new RandomAccessFile(tmpFolder+hash+".download", "r");
                 while ((read_len = s3is.read(read_buf)) > 0) {
                     fos.write(read_buf, 0, read_len);
                 }
 
                 s3is.close();
-//                for (long i=0; i<infile.length(); i++) {
-//                    fos.write(infile.read());
-//                }
             }
             fos.close();
         } catch(Exception ex) {

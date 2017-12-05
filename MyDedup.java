@@ -1,3 +1,5 @@
+import java.io.File;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
 import java.lang.UnsupportedOperationException;
@@ -6,6 +8,7 @@ import java.util.ArrayList;
 import java.io.RandomAccessFile;
 import java.lang.StringBuilder;
 import java.math.BigInteger;
+import java.nio.file.Files;
 
 public class MyDedup {
 
@@ -200,6 +203,10 @@ public class MyDedup {
         if (!index.fileExist(file_to_download)) {
           System.out.printf("%s does not exist, exiting...\n", file_to_download);
         } else {
+          File  f = new File("download");
+          if (!f.exists()) {
+              f.mkdir();
+          }
           storage.joinChunks("download/"+file_to_download, index.getChunkListByFile(file_to_download));
           System.out.printf("File %s downloaded.\n", file_to_download);
         }
