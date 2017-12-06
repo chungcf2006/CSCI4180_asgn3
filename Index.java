@@ -1,8 +1,5 @@
 import java.io.Serializable;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 public class Index implements Serializable {
   public Map<String,List<String>> files;
@@ -45,6 +42,30 @@ public class Index implements Serializable {
     filename = filename.substring(filename.lastIndexOf("/")>0?filename.lastIndexOf("/")+1:0);
     if (this.files.containsKey(filename))
       return this.files.get(filename);
+    else
+      return null;
+  }
+
+  public List<String> getRemoveListByFile (String filename) {
+    filename = filename.substring(filename.lastIndexOf("/")>0?filename.lastIndexOf("/")+1:0);
+    if (this.files.containsKey(filename)){
+      List<String> filelist =  this.files.get(filename);
+      List<String> removeList = new ArrayList<>();
+
+      Iterator<String> iter = filelist.iterator();
+
+      while (iter.hasNext()) {
+        String chunk = iter.next();
+
+        this.chunks.put(chunk, this.chunks.get(chunk) - 1);
+        if (this.chunks.get(chunk) == 0) {
+          removeList.add(chunk);
+          this.chunks.remove(chunk);
+        }
+      }
+      this.files.remove(filename);
+      return removeList;
+    }
     else
       return null;
   }

@@ -14,12 +14,12 @@ public class S3 implements Backend {
     private static final String tmpFolder = "tmp/";
     AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
 
-    static {
-        System.setProperty("https.proxyHost", "proxy.cse.cuhk.edu.hk");
-        System.setProperty("https.proxyPort", "8000");
-        System.setProperty("http.proxyHost", "proxy.cse.cuhk.edu.hk");
-        System.setProperty("http.proxyPort", "8000");
-    }
+//    static {
+//        System.setProperty("https.proxyHost", "proxy.cse.cuhk.edu.hk");
+//        System.setProperty("https.proxyPort", "8000");
+//        System.setProperty("http.proxyHost", "proxy.cse.cuhk.edu.hk");
+//        System.setProperty("http.proxyPort", "8000");
+//    }
     public S3()
     {
         Bucket b = null;
@@ -84,6 +84,7 @@ public class S3 implements Backend {
 
         try {
             for (String hash : chunks) {
+
                 S3Object o = s3.getObject("csci4180group12", hash);
                 S3ObjectInputStream s3is = o.getObjectContent();
                 byte[] read_buf = new byte[1024];
@@ -96,6 +97,17 @@ public class S3 implements Backend {
                 s3is.close();
             }
             fos.close();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void removeChunks (List<String> chunks) throws IOException {
+        try {
+            for (String hash : chunks) {
+
+                s3.deleteObject("csci4180group12", hash);
+            }
+
         } catch(Exception ex) {
             ex.printStackTrace();
         }

@@ -205,6 +205,7 @@ public class MyDedup {
         } else {
           File  f = new File("download");
           if (!f.exists()) {
+            System.out.println("download folder does not exist, trying to create...");
               f.mkdir();
           }
           storage.joinChunks("download/"+file_to_download, index.getChunkListByFile(file_to_download));
@@ -235,6 +236,13 @@ public class MyDedup {
       try {
         Backend storage = selectBackend(backend);
         Index index = storage.readIndex("MyDedup.index");
+        if (!index.fileExist(file_to_delete)) {
+          System.out.printf("%s does not exist, exiting...\n", file_to_delete);
+        } else {
+          storage.removeChunks(index.getRemoveListByFile(file_to_delete));
+          storage.writeIndex("MyDedup.index", index);
+          System.out.printf("File %s removed.\n", file_to_delete);
+        }
 
       } catch (Exception e) {
         e.printStackTrace();

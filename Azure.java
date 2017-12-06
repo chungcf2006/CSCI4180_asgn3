@@ -11,12 +11,12 @@ public class Azure implements Backend {
   private String storageConnectionString;
   private CloudBlobContainer container;
 
-  static {
-    System.setProperty("https.proxyHost", "proxy.cse.cuhk.edu.hk");
-    System.setProperty("https.proxyPort", "8000");
-    System.setProperty("http.proxyHost", "proxy.cse.cuhk.edu.hk");
-    System.setProperty("http.proxyPort", "8000");
-  }
+//  static {
+//    System.setProperty("https.proxyHost", "proxy.cse.cuhk.edu.hk");
+//    System.setProperty("https.proxyPort", "8000");
+//    System.setProperty("http.proxyHost", "proxy.cse.cuhk.edu.hk");
+//    System.setProperty("http.proxyPort", "8000");
+//  }
 
   public Azure (String connectionString) {
     storageConnectionString = connectionString;
@@ -95,6 +95,17 @@ public class Azure implements Backend {
     } catch(Exception ex) {    
       ex.printStackTrace();
     }
+  }
+  public void removeChunks (List<String> chunks) throws IOException {
+
+    try {
+      for (String hash : chunks)
+        getBlob(hash).deleteIfExists();
+
+    } catch(Exception ex) {
+      ex.printStackTrace();
+    }
+
   }
 
   public boolean writeIndex (String filename, Index index) {

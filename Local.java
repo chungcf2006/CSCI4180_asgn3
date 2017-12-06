@@ -45,6 +45,11 @@ public class Local implements Backend {
     }
     fos.close();
   }
+  public void removeChunks (List<String> chunks) throws IOException {
+
+
+  }
+
 
   public boolean writeIndex (String filename, Index index) {
     try {    
