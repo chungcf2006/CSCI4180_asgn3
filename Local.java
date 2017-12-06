@@ -1,5 +1,6 @@
 import java.io.*;
 
+import java.nio.file.Files;
 import java.util.List;
 
 
@@ -46,7 +47,16 @@ public class Local implements Backend {
     fos.close();
   }
   public void removeChunks (List<String> chunks) throws IOException {
-
+    for (String hash : chunks) {
+      try {
+        File file = new File(root + hash);
+        file.delete();
+      }
+      catch (Exception ex) {
+        // File permission problems are caught here.
+        System.err.println(ex);
+      }
+    }
 
   }
 
